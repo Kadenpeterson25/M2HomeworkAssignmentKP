@@ -1,0 +1,37 @@
+name: Rank Required MAcc Courses
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build-rank-order:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Ensure expected dataset path
+        run: |
+          mkdir -p data
+          if [ ! -f data/grad_exit_survey_2024.xlsx ] && [ -f "Grad Program Exit Survey Data 2024 (1).xlsx" ]; then
+            cp "Grad Program Exit Survey Data 2024 (1).xlsx" data/grad_exit_survey_2024.xlsx
+          fi
+
+      - name: Run deterministic ranking workflow
+        run: python scripts/rank_required_courses.py
+
+      - name: Upload ranked outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: rank-order-outputs
+          path: |
+            outputs/rank_order.csv
+            outputs/rank_order.png

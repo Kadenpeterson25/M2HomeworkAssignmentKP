@@ -1,0 +1,6 @@
+# Generated workflow outputs
+outputs/*.png
+outputs/*.csv
+
+# Local virtual envs
+.venv/
